@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
-# HTML fayllar uchun yo'l
+# HTML fayllar turgan papkani ulash
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
