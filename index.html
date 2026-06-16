@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Video Fabrika</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        .container { background: white; padding: 20px; border: 1px solid #ccc; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Video Fabrika</h1>
+        <input type="text" id="prompt" placeholder="Video uchun mavzu yozing...">
+        <br><br>
+        <button onclick="createVideo()">Video yasash</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        async function createVideo() {
+            const promptText = document.getElementById("prompt").value;
+            const resultElement = document.getElementById("result");
+            
+            resultElement.innerText = "Video tayyorlanmoqda...";
+            
+            const response = await fetch("/create-video/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({prompt: promptText})
+            });
+            
+            const data = await response.json();
+            resultElement.innerText = "Natija: " + (data.video_url || data.message);
+        }
+    </script>
+</body>
+</html>
