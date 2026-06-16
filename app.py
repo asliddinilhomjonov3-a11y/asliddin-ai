@@ -1,31 +1,39 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-import os
 import replicate
+import os
 
 app = FastAPI()
-# templates papkasi loyihangizning ildizida (root) bo'lishi shart
 templates = Jinja2Templates(directory="templates")
 
-# Tokenni Render'dan xavfsiz olish
+# API tokeningiz Render'da o'rnatilganiga ishonch hosil qiling
 os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    # Bu usul FastAPI 0.108.0+ uchun eng to'g'ri usul
-    return templates.TemplateResponse(request=request, name="index.html", context={})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/create-video/")
 async def create_ai_video(request: Request):
     try:
+        # Frontdan kelgan ma'lumotni o'qish
         data = await request.json()
-        prompt = data.get("prompt", "a cinematic shot of a sunset")
+        prompt_text = data.get("prompt", "a beautiful landscape")
         
+        # AI chaqiruvi
         output = replicate.run(
             "stability-ai/stable-video-diffusion:3f045789",
-            input={"input_image": prompt}
+            input={"input_image": prompt_text}
         )
-        return {"video_url": str(output)}
+        
+        # Natijani logga chiqaramiz (Render Logs bo'limida ko'rishingiz mumkin)
+        print("AI chiqishi:", output)
+        
+        # Agar natija ro'yxat bo'lsa, birinchi elementni olamiz
+        video_url = str(output[0]) if isinstance(output, list) else str(output)
+        
+        return {"video_url": video_url}
     except Exception as e:
+        # Xatoni aniq yozib qaytaramiz
         return {"error": str(e)}
