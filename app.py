@@ -7,13 +7,12 @@ import os
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# Tokenni Render muhitidan oling
 os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
 
-# Render "tirikmi?" deb tekshirganda 200 OK qaytarish uchun
+# Render "tirikmi" deb tekshirganda 200 OK qaytaradi
 @app.head("/")
 async def ping():
-    return {}
+    return {"status": "ok"}
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
