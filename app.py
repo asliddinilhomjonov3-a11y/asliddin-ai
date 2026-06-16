@@ -5,10 +5,13 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
 
-# Tokenni Render muhitidan xavfsiz olish
-os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN")
+# templates papkasini topish
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+
+# API tokenni yuklash
+os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
