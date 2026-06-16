@@ -14,15 +14,24 @@
         async function createVideo() {
             const promptText = document.getElementById("prompt").value;
             const resultElement = document.getElementById("result");
-            resultElement.innerText = "Video tayyorlanmoqda...";
+            resultElement.innerText = "Video tayyorlanmoqda, kuting...";
             
-            const response = await fetch("/create-video/", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({prompt: promptText})
-            });
-            const data = await response.json();
-            resultElement.innerText = "Natija: " + JSON.stringify(data);
+            try {
+                const response = await fetch("/create-video/", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({prompt: promptText})
+                });
+                const data = await response.json();
+                
+                if (data.video_url) {
+                    resultElement.innerText = "Natija: " + data.video_url;
+                } else {
+                    resultElement.innerText = "Xato: " + (data.error || "Noma'lum xato");
+                }
+            } catch (err) {
+                resultElement.innerText = "Ulanishda xatolik!";
+            }
         }
     </script>
 </body>
