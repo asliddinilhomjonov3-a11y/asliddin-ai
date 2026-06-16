@@ -8,8 +8,11 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 async def home(request: Request):
-    # Bu format FastAPI'ning barcha versiyalarida barqaror ishlaydi
-    return templates.TemplateResponse("index.html", {"request": request})
+    # Bu usul eng barqaror hisoblanadi
+    return templates.TemplateResponse(
+        request=request, 
+        name="index.html"
+    )
 
 @app.post("/create-video/")
 async def create_ai_video(prompt: str, user_id: str):
