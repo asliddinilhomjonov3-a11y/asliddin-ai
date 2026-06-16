@@ -1,11 +1,21 @@
-<script>
-    async function createVideo() {
-        const promptText = document.getElementById("prompt").value;
-        const resultElement = document.getElementById("result");
-        
-        resultElement.innerText = "Video tayyorlanmoqda...";
-        
-        try {
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Video Fabrika</title>
+</head>
+<body>
+    <h1>AI Video Fabrika</h1>
+    <input type="text" id="prompt" placeholder="Video uchun mavzu yozing...">
+    <button onclick="createVideo()">Video yasash</button>
+    <p id="result"></p>
+
+    <script>
+        async function createVideo() {
+            const promptText = document.getElementById("prompt").value;
+            const resultElement = document.getElementById("result");
+            resultElement.innerText = "Video tayyorlanmoqda, kuting...";
+            
             const response = await fetch("/create-video/", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -16,13 +26,10 @@
             
             if (data.video_url) {
                 resultElement.innerText = "Natija: " + data.video_url;
-            } else if (data.error) {
-                resultElement.innerText = "Xato: " + data.error;
             } else {
-                resultElement.innerText = "Noma'lum javob keldi.";
+                resultElement.innerText = "Xato: " + (data.error || "Noma'lum xatolik");
             }
-        } catch (err) {
-            resultElement.innerText = "Serverga ulanib bo'lmadi.";
         }
-    }
-</script>
+    </script>
+</body>
+</html>
