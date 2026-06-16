@@ -4,7 +4,9 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 @app.get("/")
 def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(
+        request=request, name="index.html"
+    )
 @app.post("/create-video/")
 async def create_ai_video(prompt: str, user_id: str):
     return {"message": f"Video tayyorlanmoqda: {prompt}", "status": "processing"}
