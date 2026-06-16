@@ -2,7 +2,6 @@
     async function createVideo() {
         const promptText = document.getElementById("prompt").value;
         const resultElement = document.getElementById("result");
-        
         resultElement.innerText = "Video tayyorlanmoqda...";
         
         const response = await fetch("/create-video/", {
@@ -13,10 +12,13 @@
         
         const data = await response.json();
         
-        if (data.video_url) {
+        // Agar serverdan javob kelsa, uni ko'rsatadi
+        if (data && data.video_url) {
             resultElement.innerText = "Natija: " + data.video_url;
+        } else if (data && data.error) {
+            resultElement.innerText = "Xatolik: " + data.error;
         } else {
-            resultElement.innerText = "Xato: " + (data.error || "Noma'lum xatolik");
+            resultElement.innerText = "Noma'lum xatolik yuz berdi.";
         }
     }
 </script>
