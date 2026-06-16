@@ -5,17 +5,18 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 
 app = FastAPI()
+# templates papkasi loyihangizning ildizida ekanligiga ishonch hosil qiling
+templates = Jinja2Templates(directory="templates")
 
-# templates papkasini topish
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
-
-# API tokenni yuklash
+# API tokeni Render muhitidan yuklanadi
 os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    # Yangi FastAPI versiyalari uchun to'g'ri format
+    return templates.TemplateResponse(
+        request=request, name="index.html", context={}
+    )
 
 @app.post("/create-video/")
 async def create_ai_video(request: Request):
@@ -23,7 +24,6 @@ async def create_ai_video(request: Request):
         data = await request.json()
         prompt = data.get("prompt", "a beautiful landscape")
         
-        # AI chaqiruvi
         output = replicate.run(
             "stability-ai/stable-video-diffusion:3f045789",
             input={"input_image": prompt}
