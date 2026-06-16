@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Video Fabrika</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f4f4f9; }
+        .container { background: white; padding: 20px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input { padding: 10px; width: 300px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 5px; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Video Fabrika</h1>
+        <input type="text" id="prompt" placeholder="Video uchun mavzu yozing...">
+        <br>
+        <button onclick="createVideo()">Video yasash</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        async function createVideo() {
+            const prompt = document.getElementById('prompt').value;
+            const res = await fetch(`/create-video/?prompt=${prompt}&user_id=dasturchi_1`, { method: 'POST' });
+            const data = await res.json();
+            document.getElementById('result').innerText = data.message;
+        }
+    </script>
+</body>
+</html>
