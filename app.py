@@ -1,9 +1,14 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 import replicate
+import os
 
 app = FastAPI()
+# templates papkasi loyihangizning asosiy qismida bo'lishi kerak
 templates = Jinja2Templates(directory="templates")
+
+# API tokeni Render'dan olinadi
+os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
 
 @app.get("/")
 async def home(request: Request):
