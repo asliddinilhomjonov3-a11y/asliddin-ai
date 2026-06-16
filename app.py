@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# API tokeni Render muhitidan olinadi
+# Tokenni Render muhitidan olish
 os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
 
 @app.get("/", response_class=HTMLResponse)
@@ -18,13 +18,14 @@ async def home(request: Request):
 async def create_ai_video(request: Request):
     try:
         data = await request.json()
-        prompt_text = data.get("prompt", "a beautiful landscape")
+        prompt_text = data.get("prompt", "a cinematic shot of a sunset")
         
-        # AI modelini chaqirish
+        # AI chaqiruvi (Stable Video Diffusion)
         output = replicate.run(
             "stability-ai/stable-video-diffusion:3f045789",
-            input={"input_image": prompt_text} 
+            input={"input_image": prompt_text}
         )
         return {"video_url": output}
     except Exception as e:
+        # Xatoni log qilish uchun
         return {"error": str(e)}
