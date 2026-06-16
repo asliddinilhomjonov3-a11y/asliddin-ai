@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>AI Video Fabrika</h1>
-    <input type="text" id="prompt" placeholder="Video uchun mavzu...">
+    <input type="text" id="prompt" placeholder="Video uchun mavzu yozing...">
     <button onclick="createVideo()">Video yasash</button>
     <p id="result"></p>
 
@@ -14,23 +14,21 @@
         async function createVideo() {
             const promptText = document.getElementById("prompt").value;
             const resultElement = document.getElementById("result");
-            resultElement.innerText = "Video tayyorlanmoqda, kuting...";
+            resultElement.innerText = "Video tayyorlanmoqda, iltimos kuting...";
             
-            try {
-                const response = await fetch("/create-video/", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({prompt: promptText})
-                });
-                const data = await response.json();
-                
-                if (data.video_url) {
-                    resultElement.innerText = "Natija: " + data.video_url;
-                } else {
-                    resultElement.innerText = "Xato: " + (data.error || "Noma'lum xato");
-                }
-            } catch (err) {
-                resultElement.innerText = "Ulanishda xatolik!";
+            const response = await fetch("/create-video/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({prompt: promptText})
+            });
+            
+            const data = await response.json();
+            
+            // "undefined" o'rniga aniq ma'lumotni tekshiramiz
+            if (data.video_url) {
+                resultElement.innerText = "Natija: " + data.video_url;
+            } else {
+                resultElement.innerText = "Xato: " + (data.error || "Noma'lum xatolik");
             }
         }
     </script>
