@@ -1,16 +1,17 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-user_credits = {"dasturchi_1": 100}
+# HTML fayllar turgan papkani ulash
+templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
-def home():
-    return {"status": "AI Video Fabrika ishga tushdi", "docs": "http://127.0.0.1:8000/docs manzili orqali API ni ko'rishing mumkin"}
+def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/create-video/")
 async def create_ai_video(prompt: str, user_id: str):
-    if user_id not in user_credits or user_credits[user_id] <= 0:
-        raise HTTPException(status_code=403, detail="Kredit tugadi, obuna bo'ling!")
-    
+    # Bu yerda video yasash mantig'i bo'ladi
     return {"message": f"Video tayyorlanmoqda: {prompt}", "status": "processing"}
