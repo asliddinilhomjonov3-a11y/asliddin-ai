@@ -10,7 +10,7 @@ templates = Jinja2Templates(directory="templates")
 # Tokenni Render'dan xavfsiz olish
 os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
 
-@app.get("/", response_class=HTMLResponse)
+  @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
