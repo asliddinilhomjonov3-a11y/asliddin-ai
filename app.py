@@ -8,27 +8,28 @@ async def home():
     return """
     <!DOCTYPE html>
     <html>
+    <head>
+        <style>
+            img { max-width: 500px; margin-top: 20px; border: 2px solid #ccc; }
+        </style>
+    </head>
     <body>
         <h2>AI Bepul Rasm Fabrikasi</h2>
-        <input type="text" id="prompt" placeholder="Masalan: futuristic city">
+        <input type="text" id="prompt" placeholder="Masalan: A beautiful landscape">
         <button onclick="createArt()">Yaratish</button>
-        <div id="result" style="margin-top:20px;"></div>
+        <div id="result"></div>
         
         <script>
             function createArt() {
                 const resEl = document.getElementById("result");
                 const prompt = document.getElementById("prompt").value;
-                resEl.innerHTML = "Rasm yaratilmoqda, kuting...";
+                const encodedPrompt = encodeURIComponent(prompt);
                 
-                const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=768&height=768&seed=42&nologo=true`;
+                resEl.innerHTML = "Rasm yuklanmoqda...";
                 
-                // Rasm yuklangandan keyin ko'rsatish
-                const img = new Image();
-                img.src = imageUrl;
-                img.onload = () => {
-                    resEl.innerHTML = `<img src="${imageUrl}" style="max-width:500px; border-radius:10px;"><br>
-                                       <a href="${imageUrl}" target="_blank">Rasmni kattaroq ko'rish</a>`;
-                };
+                // Rasmni sahifaga qo'shamiz
+                const imgUrl = `https://pollinations.ai/p/${encodedPrompt}?width=768&height=768&seed=42`;
+                resEl.innerHTML = `<br><img src="${imgUrl}" alt="AI Rasm">`;
             }
         </script>
     </body>
