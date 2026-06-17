@@ -5,27 +5,27 @@ import replicate
 import os
 
 app = FastAPI()
-# "templates" papkasi loyihangizning asosiy papkasida ekanligiga ishonch hosil qiling
 templates = Jinja2Templates(directory="templates")
 
-# API tokenini Render muhitidan oling
+# Tokenni Render'dan olish
 os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    # E'tibor bering: request=request yozilishi shart
-    return templates.TemplateResponse(request=request, name="index.html", context={})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/create-video/")
 async def create_ai_video(request: Request):
     try:
         data = await request.json()
-        prompt_text = data.get("prompt", "a cinematic shot of a sunset")
+        prompt = data.get("prompt", "a cat wearing sunglasses")
         
+        # Replicate API chaqiruvi
         output = replicate.run(
             "stability-ai/stable-video-diffusion:3f045789",
-            input={"input_image": prompt_text}
+            input={"input_image": prompt}
         )
+        # Natijani aniq formatda qaytarish
         return {"video_url": str(output)}
     except Exception as e:
         return {"error": str(e)}
