@@ -1,10 +1,17 @@
-<script>
-    async function createVideo() {
-        const promptText = document.getElementById("prompt").value;
-        const resultElement = document.getElementById("result");
-        resultElement.innerText = "Video tayyorlanmoqda...";
-        
-        try {
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>AI Rasm Fabrika</h1>
+    <input type="text" id="prompt" placeholder="Mavzu...">
+    <button onclick="createVideo()">Yasash</button>
+    <div id="result"></div>
+
+    <script>
+        async function createVideo() {
+            const promptText = document.getElementById("prompt").value;
+            const resEl = document.getElementById("result");
+            resEl.innerText = "Kuting...";
+            
             const response = await fetch("/create-video/", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -12,20 +19,12 @@
             });
             
             const data = await response.json();
-            
-            // MUHIM: Serverdan nima kelayotganini tekshiramiz
-            console.log("Server javobi:", data);
-            
-            if (data && data.video_url) {
-                resultElement.innerText = "Natija: " + data.video_url;
-            } else if (data && data.error) {
-                resultElement.innerText = "Server xatosi: " + data.error;
+            if (data.video_url) {
+                resEl.innerHTML = `<img src="${data.video_url}" width="300">`;
             } else {
-                // Agar hech narsa bo'lmasa, butun javobni chiqaramiz
-                resultElement.innerText = "Noma'lum javob: " + JSON.stringify(data);
+                resEl.innerText = "Xatolik: " + data.error;
             }
-        } catch (err) {
-            resultElement.innerText = "Xatolik: " + err.message;
         }
-    }
-</script>
+    </script>
+</body>
+</html>
