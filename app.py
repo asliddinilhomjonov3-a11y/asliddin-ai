@@ -12,7 +12,7 @@ os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    # Yangi sintaksis: "request"ni context ichida emas, alohida argument sifatida beramiz
+    # TO'G'RI SINTAKSIS: requestni context ichiga emas, alohida argument qilib beramiz
     return templates.TemplateResponse(request=request, name="index.html")
 
 @app.post("/create-video/")
