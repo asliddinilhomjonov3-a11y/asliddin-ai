@@ -1,31 +1,33 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-import replicate
 import os
+import replicate
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# Tokenni Render'dan olish
+# Tokenni Render'dan xavfsiz olish
 os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
+
+@app.head("/")
+async def ping():
+    return {"status": "ok"}
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 @app.post("/create-video/")
 async def create_ai_video(request: Request):
     try:
         data = await request.json()
-        prompt = data.get("prompt", "a cat wearing sunglasses")
+        prompt_text = data.get("prompt", "a cinematic shot of a sunset")
         
-        # Replicate API chaqiruvi
         output = replicate.run(
             "stability-ai/stable-video-diffusion:3f045789",
-            input={"input_image": prompt}
+            input={"input_image": prompt_text}
         )
-        # Natijani aniq formatda qaytarish
         return {"video_url": str(output)}
     except Exception as e:
         return {"error": str(e)}
