@@ -1,27 +1,27 @@
-<script>
-    async function createVideo() {
-        const promptText = document.getElementById("prompt").value;
-        const resultElement = document.getElementById("result");
-        resultElement.innerText = "Video tayyorlanmoqda...";
+async function createVideo() {
+    const promptText = document.getElementById("prompt").value;
+    const resultElement = document.getElementById("result");
+    
+    resultElement.innerText = "Video tayyorlanmoqda...";
+    
+    try {
+        const response = await fetch("/create-video/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({prompt: promptText})
+        });
         
-        try {
-            const response = await fetch("/create-video/", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({prompt: promptText})
-            });
-            
-            const data = await response.json();
-            
-            if (data.video_url) {
-                resultElement.innerText = "Natija: " + data.video_url;
-            } else if (data.error) {
-                resultElement.innerText = "Xatolik: " + data.error;
-            } else {
-                resultElement.innerText = "Noma'lum javob.";
-            }
-        } catch (err) {
-            resultElement.innerText = "Ulanish xatosi.";
+        const data = await response.json();
+        console.log("Server javobi:", data); // F12 -> Console bo'limida ko'ring
+
+        if (data.video_url) {
+            resultElement.innerText = "Natija: " + data.video_url;
+        } else if (data.error) {
+            resultElement.innerText = "Xatolik: " + data.error;
+        } else {
+            resultElement.innerText = "Server javobida video_url yo'q: " + JSON.stringify(data);
         }
+    } catch (err) {
+        resultElement.innerText = "Ulanish xatosi: " + err.message;
     }
-</script>
+}
