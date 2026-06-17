@@ -17,12 +17,13 @@ async def home():
         <script>
             async function createVideo() {
                 const resEl = document.getElementById("result");
+                const prompt = document.getElementById("prompt").value;
                 resEl.innerText = "Kuting...";
                 try {
                     const response = await fetch("/api/video/", {
                         method: "POST",
                         headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({prompt: document.getElementById("prompt").value})
+                        body: JSON.stringify({prompt: prompt})
                     });
                     const data = await response.json();
                     resEl.innerText = data.msg;
@@ -36,22 +37,18 @@ async def home():
 @app.post("/api/video/")
 async def create_video(request: Request):
     try:
-        # Tokenni o'qish
         token = os.getenv("REPLICATE_API_TOKEN")
-        if not token: 
-            return {"msg": "XATO: API Token topilmadi!"}
+        if not token: return {"msg": "XATO: API Token topilmadi!"}
         
         data = await request.json()
-        prompt = data.get("prompt", "a cat")
+        prompt = data.get("prompt", "a cinematic photo of a mountain")
         
-        # Modelni chaqirish (SDXL versiyasi yangilandi)
+        # Versiyasiz model chaqiruvi (eng to'g'ri usul)
         client = replicate.Client(api_token=token)
         output = client.run(
-            "stability-ai/sdxl:7762fd0772f2b5a6f9736ad90396426300406606346761614050513904943891", 
+            "stability-ai/sdxl",
             input={"prompt": prompt}
         )
-        
         return {"msg": "Natija: " + str(output)}
-        
     except Exception as e:
         return {"msg": "SERVER XATOSI: " + str(e)}
