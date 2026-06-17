@@ -8,28 +8,20 @@ async def home():
     return """
     <!DOCTYPE html>
     <html>
-    <head>
-        <style>
-            img { max-width: 500px; margin-top: 20px; border: 2px solid #ccc; }
-        </style>
-    </head>
     <body>
         <h2>AI Bepul Rasm Fabrikasi</h2>
-        <input type="text" id="prompt" placeholder="Masalan: A beautiful landscape">
+        <input type="text" id="prompt" value="a futuristic city">
         <button onclick="createArt()">Yaratish</button>
-        <div id="result"></div>
+        <div id="result" style="margin-top:20px;"></div>
         
         <script>
             function createArt() {
                 const resEl = document.getElementById("result");
                 const prompt = document.getElementById("prompt").value;
-                const encodedPrompt = encodeURIComponent(prompt);
+                const url = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=512&height=512&seed=1`;
                 
-                resEl.innerHTML = "Rasm yuklanmoqda...";
-                
-                // Rasmni sahifaga qo'shamiz
-                const imgUrl = `https://pollinations.ai/p/${encodedPrompt}?width=768&height=768&seed=42`;
-                resEl.innerHTML = `<br><img src="${imgUrl}" alt="AI Rasm">`;
+                resEl.innerHTML = "Rasmni yuklayapman: <br> " + url + "<br><br>" + 
+                                  `<img src="${url}" onerror="this.onerror=null; this.src='https://placehold.co/200x200?text=Xato!';" style="border: 2px solid red;">`;
             }
         </script>
     </body>
