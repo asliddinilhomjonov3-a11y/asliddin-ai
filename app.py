@@ -1,33 +1,37 @@
 import os
+import replicate
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
-import replicate
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 @app.post("/create-video/")
-async def create_video(request: Request):
+async def create_ai_video(request: Request):
     try:
-        api_token = os.getenv("REPLICATE_API_TOKEN")
-        if not api_token:
+        # API tokeni mavjudligini tekshiramiz
+        token = os.getenv("REPLICATE_API_TOKEN")
+        if not token:
             return JSONResponse(status_code=500, content={"error": "API Token topilmadi"})
-            
+
         data = await request.json()
-        prompt = data.get("prompt", "a cat")
+        prompt = data.get("prompt", "a cinematic landscape")
         
-        # SDXL modeli matn qabul qiladi
-        client = replicate.Client(api_token=api_token)
+        # Matn qabul qiluvchi model (sdxl)
+        client = replicate.Client(api_token=token)
         output = client.run(
             "stability-ai/sdxl:39ed52f2",
             input={"prompt": prompt}
         )
+        
+        # Natijani qaytaramiz
         return {"video_url": output[0] if isinstance(output, list) else output}
         
     except Exception as e:
+        # Xatoni batafsil qaytaramiz (500 xatosini ko'rmaslik uchun)
         return JSONResponse(status_code=500, content={"error": str(e)})
