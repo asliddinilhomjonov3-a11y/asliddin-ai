@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>AI Rasm Fabrika</h1>
     <input type="text" id="prompt" placeholder="Mavzu...">
-    <button onclick="createVideo()">Yasash</button>
-    <div id="result"></div>
+    <button onclick="createVideo()">Video yasash</button>
+    <p id="result"></p>
 
     <script>
         async function createVideo() {
-            const promptText = document.getElementById("prompt").value;
+            const prompt = document.getElementById("prompt").value;
             const resEl = document.getElementById("result");
             resEl.innerText = "Kuting...";
             
-            const response = await fetch("/create-video/", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({prompt: promptText})
-            });
-            
-            const data = await response.json();
-            if (data.video_url) {
-                resEl.innerHTML = `<img src="${data.video_url}" width="300">`;
-            } else {
-                resEl.innerText = "Xatolik: " + data.error;
+            try {
+                const response = await fetch("/create-video/", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({prompt: prompt})
+                });
+                const data = await response.json();
+                
+                if (data.status === "success") {
+                    resEl.innerText = "Natija: " + data.data;
+                } else {
+                    resEl.innerText = "Xatolik: " + data.message;
+                }
+            } catch (e) {
+                resEl.innerText = "Ulanish xatosi.";
             }
         }
     </script>
