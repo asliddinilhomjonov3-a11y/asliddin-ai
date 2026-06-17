@@ -1,8 +1,8 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.templating import Jinja2Templates
 import os
 import replicate
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -12,21 +12,19 @@ async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/create-video/")
-async def create_ai_video(request: Request):
+async def create_video(request: Request):
     try:
+        # Tokenni to'g'ridan-to'g'ri os.getenv dan olamiz
+        token = os.getenv("REPLICATE_API_TOKEN")
         data = await request.json()
         prompt = data.get("prompt", "a cinematic shot")
         
-        # Replicate mijozini yaratish
-        client = replicate.Client(api_token=os.getenv("REPLICATE_API_TOKEN"))
-        
         # Modelni ishga tushirish
+        client = replicate.Client(api_token=token)
         output = client.run(
             "stability-ai/stable-video-diffusion:3f045789",
             input={"input_image": prompt}
         )
-        return JSONResponse(content={"status": "success", "data": str(output)})
-    
+        return {"status": "success", "data": str(output)}
     except Exception as e:
-        # Xatoni ekranga chiqarish uchun JSON formatda qaytaramiz
-        return JSONResponse(content={"status": "error", "message": str(e)}, status_code=500)
+        return {"status": "error", "message": str(e)}
