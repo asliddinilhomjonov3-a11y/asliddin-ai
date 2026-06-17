@@ -13,18 +13,15 @@
             
             const data = await response.json();
             
-            // Log yordamida brauzer konsolida nima kelayotganini ko'ramiz
-            console.log("Serverdan kelgan javob:", data);
-            
-            // Agar serverdan natija kelsa, uni ko'rsatish
             if (data.video_url) {
                 resultElement.innerText = "Natija: " + data.video_url;
+            } else if (data.error) {
+                resultElement.innerText = "Xatolik: " + data.error;
             } else {
-                // Agar video_url bo'lmasa, serverdan kelgan butun ma'lumotni chiqarish
-                resultElement.innerText = "Server javobi: " + JSON.stringify(data);
+                resultElement.innerText = "Noma'lum javob.";
             }
         } catch (err) {
-            resultElement.innerText = "Xatolik: " + err.message;
+            resultElement.innerText = "Ulanish xatosi.";
         }
     }
 </script>
