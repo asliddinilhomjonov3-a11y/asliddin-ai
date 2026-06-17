@@ -1,41 +1,22 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <title>AI Video Fabrika</title>
-</head>
-<body>
-    <h1>AI Video Fabrika</h1>
-    <input type="text" id="prompt" placeholder="Video uchun mavzu yozing...">
-    <button onclick="createVideo()">Video yasash</button>
-    <div id="result"></div>
-
-    <script>
-        async function createVideo() {
-            const promptText = document.getElementById("prompt").value;
-            const resultElement = document.getElementById("result");
-            resultElement.innerText = "Video tayyorlanmoqda...";
-            
-            try {
-                const response = await fetch("/create-video/", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({prompt: promptText})
-                });
-                
-                const data = await response.json();
-                
-                if (data.video_url) {
-                    resultElement.innerText = "Natija: " + data.video_url;
-                } else if (data.error) {
-                    resultElement.innerText = "Xatolik: " + data.error;
-                } else {
-                    resultElement.innerText = "Noma'lum javob keldi.";
-                }
-            } catch (err) {
-                resultElement.innerText = "Ulanish xatosi.";
-            }
+<script>
+    async function createVideo() {
+        const promptText = document.getElementById("prompt").value;
+        const resultElement = document.getElementById("result");
+        resultElement.innerText = "Video tayyorlanmoqda, kuting...";
+        
+        const response = await fetch("/create-video/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({prompt: promptText})
+        });
+        
+        const data = await response.json();
+        
+        // Backenddan kelgan 'result' ni ekranga chiqaramiz
+        if (data.result) {
+            resultElement.innerText = "Natija: " + data.result;
+        } else {
+            resultElement.innerText = "Kutilmagan xato yuz berdi.";
         }
-    </script>
-</body>
-</html>
+    }
+</script>
