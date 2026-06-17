@@ -1,29 +1,25 @@
 <script>
     async function createVideo() {
-        const promptText = document.getElementById("prompt").value;
+        const prompt = document.getElementById("prompt").value;
         const resultElement = document.getElementById("result");
-        resultElement.innerText = "Video tayyorlanmoqda, kuting...";
+        resultElement.innerText = "Video tayyorlanmoqda...";
         
         try {
             const response = await fetch("/create-video/", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({prompt: promptText})
+                body: JSON.stringify({prompt: prompt})
             });
             
-            // Javobni matn sifatida olamiz, keyin JSON ga o'giramiz
-            const text = await response.text();
-            console.log("Serverdan kelgan xom matn:", text);
+            const result = await response.json();
             
-            const json = JSON.parse(text);
-            
-            if (json.status === "success") {
-                resultElement.innerText = "Natija: " + json.data;
+            if (response.ok) {
+                resultElement.innerText = "Natija: " + result.data;
             } else {
-                resultElement.innerText = "Xatolik: " + json.message;
+                resultElement.innerText = "Xatolik: " + result.message;
             }
         } catch (err) {
-            resultElement.innerText = "Server javobida xatolik: " + err.message;
+            resultElement.innerText = "Ulanish xatosi: " + err.message;
         }
     }
 </script>
