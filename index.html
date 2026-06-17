@@ -2,23 +2,26 @@
     async function createVideo() {
         const promptText = document.getElementById("prompt").value;
         const resultElement = document.getElementById("result");
-        resultElement.innerText = "Video tayyorlanmoqda...";
+        resultElement.innerText = "Video tayyorlanmoqda, kuting...";
         
-        const response = await fetch("/create-video/", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({prompt: promptText})
-        });
-        
-        const data = await response.json();
-        
-        // Agar serverdan javob kelsa, uni ko'rsatadi
-        if (data && data.video_url) {
-            resultElement.innerText = "Natija: " + data.video_url;
-        } else if (data && data.error) {
-            resultElement.innerText = "Xatolik: " + data.error;
-        } else {
-            resultElement.innerText = "Noma'lum xatolik yuz berdi.";
+        try {
+            const response = await fetch("/create-video/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({prompt: promptText})
+            });
+            
+            const data = await response.json();
+            
+            if (data.video_url) {
+                resultElement.innerText = "Natija: " + data.video_url;
+            } else if (data.error) {
+                resultElement.innerText = "Xatolik: " + data.error;
+            } else {
+                resultElement.innerText = "Serverdan javob kelmadi.";
+            }
+        } catch (err) {
+            resultElement.innerText = "Ulanish xatosi.";
         }
     }
 </script>
