@@ -1,23 +1,31 @@
-async function createVideo() {
-    const promptText = document.getElementById("prompt").value;
-    const resultElement = document.getElementById("result");
-    resultElement.innerText = "Video tayyorlanmoqda...";
-    
-    const response = await fetch("/create-video/", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({prompt: promptText})
-    });
-
-    const text = await response.text(); // JSON emas, avval matn olamiz
-    try {
-        const data = JSON.parse(text);
-        if (data.video_url) {
-            resultElement.innerText = "Natija: " + data.video_url;
-        } else {
-            resultElement.innerText = "Xato: " + data.error;
+<script>
+    async function createVideo() {
+        const promptText = document.getElementById("prompt").value;
+        const resultElement = document.getElementById("result");
+        resultElement.innerText = "Video tayyorlanmoqda...";
+        
+        try {
+            const response = await fetch("/create-video/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({prompt: promptText})
+            });
+            
+            const data = await response.json();
+            
+            // MUHIM: Serverdan nima kelayotganini tekshiramiz
+            console.log("Server javobi:", data);
+            
+            if (data && data.video_url) {
+                resultElement.innerText = "Natija: " + data.video_url;
+            } else if (data && data.error) {
+                resultElement.innerText = "Server xatosi: " + data.error;
+            } else {
+                // Agar hech narsa bo'lmasa, butun javobni chiqaramiz
+                resultElement.innerText = "Noma'lum javob: " + JSON.stringify(data);
+            }
+        } catch (err) {
+            resultElement.innerText = "Xatolik: " + err.message;
         }
-    } catch (e) {
-        resultElement.innerText = "Server xatosi: " + text; // Server nima yuborsa shuni chiqaramiz
     }
-}
+</script>
