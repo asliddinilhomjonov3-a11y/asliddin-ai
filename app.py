@@ -12,26 +12,23 @@ async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/create-video/")
-async def create_video(request: Request):
+async def create_ai_video(request: Request):
     try:
-        token = os.getenv("REPLICATE_API_TOKEN")
+        # Tokenni Render muhitidan olamiz
+        token = os.environ.get("REPLICATE_API_TOKEN")
         if not token:
-            return JSONResponse(status_code=500, content={"error": "API Token topilmadi!"})
-            
-        data = await request.json()
-        prompt = data.get("prompt", "a cinematic shot")
+            return JSONResponse(status_code=500, content={"error": "API Token Render'da sozlanmagan!"})
         
-        # Replicate modelini chaqirish
+        data = await request.json()
+        prompt = data.get("prompt", "a cinematic landscape")
+        
+        # Modelni chaqirish
         client = replicate.Client(api_token=token)
         output = client.run(
             "stability-ai/sdxl:39ed52f2",
             input={"prompt": prompt}
         )
-        
-        # Natijani to'g'ridan-to'g'ri qaytaramiz
-        url = output[0] if isinstance(output, list) else output
-        return {"result": str(url)}
-        
+        return {"result": str(output[0])}
+    
     except Exception as e:
-        # Xatoni aniq matn ko'rinishida yuboramiz
         return JSONResponse(status_code=500, content={"error": str(e)})
