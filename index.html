@@ -1,33 +1,24 @@
-<!DOCTYPE html>
-<html>
-<body>
-    <input type="text" id="prompt" placeholder="Mavzu...">
-    <button onclick="createVideo()">Video yasash</button>
-    <p id="result"></p>
-
-    <script>
-        async function createVideo() {
-            const prompt = document.getElementById("prompt").value;
-            const resEl = document.getElementById("result");
-            resEl.innerText = "Kuting...";
-            
-            try {
-                const response = await fetch("/create-video/", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({prompt: prompt})
-                });
-                const data = await response.json();
-                
-                if (data.status === "success") {
-                    resEl.innerText = "Natija: " + data.data;
-                } else {
-                    resEl.innerText = "Xatolik: " + data.message;
-                }
-            } catch (e) {
-                resEl.innerText = "Ulanish xatosi.";
-            }
+async function createVideo() {
+    const promptText = document.getElementById("prompt").value;
+    const resEl = document.getElementById("result");
+    resEl.innerText = "Video tayyorlanmoqda...";
+    
+    try {
+        const response = await fetch("/create-video/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({prompt: promptText})
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            resEl.innerText = "Natija: " + data.video_url;
+        } else {
+            // Serverdan kelgan aniq xatoni ko'rsatish
+            resEl.innerText = "Server xatosi: " + data.error;
         }
-    </script>
-</body>
-</html>
+    } catch (e) {
+        resEl.innerText = "Ulanishda xatolik yuz berdi.";
+    }
+}
