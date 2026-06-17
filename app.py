@@ -18,10 +18,18 @@ async def home():
             function createArt() {
                 const resEl = document.getElementById("result");
                 const prompt = document.getElementById("prompt").value;
-                // 'https' ishlatamiz
                 const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&seed=42`;
                 
-                resEl.innerHTML = `<img src="${url}" style="border: 2px solid green; max-width: 500px;">`;
+                resEl.innerHTML = "Rasm tayyorlanmoqda...";
+                
+                const img = new Image();
+                img.src = url;
+                img.onload = function() {
+                    resEl.innerHTML = `<img src="${url}" style="border: 2px solid blue; max-width: 500px;">`;
+                };
+                img.onerror = function() {
+                    resEl.innerHTML = "Xatolik yuz berdi. Iltimos, boshqa so'rov yuboring.";
+                };
             }
         </script>
     </body>
