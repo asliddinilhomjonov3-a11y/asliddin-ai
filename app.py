@@ -41,12 +41,12 @@ async def create_video(request: Request):
         if not token: return {"msg": "XATO: API Token topilmadi!"}
         
         data = await request.json()
-        prompt = data.get("prompt", "a cinematic photo of a mountain")
+        prompt = data.get("prompt", "a cinematic photo")
         
-        # Versiyasiz model chaqiruvi (eng to'g'ri usul)
+        # Eng barqaror model yo'li
         client = replicate.Client(api_token=token)
         output = client.run(
-            "stability-ai/sdxl",
+            "stability-ai/stable-diffusion-3",
             input={"prompt": prompt}
         )
         return {"msg": "Natija: " + str(output)}
