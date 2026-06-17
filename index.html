@@ -2,7 +2,7 @@
     async function createVideo() {
         const promptText = document.getElementById("prompt").value;
         const resultElement = document.getElementById("result");
-        resultElement.innerText = "Video tayyorlanmoqda, kuting...";
+        resultElement.innerText = "Video tayyorlanmoqda...";
         
         try {
             const response = await fetch("/create-video/", {
@@ -13,15 +13,18 @@
             
             const data = await response.json();
             
+            // Log yordamida brauzer konsolida nima kelayotganini ko'ramiz
+            console.log("Serverdan kelgan javob:", data);
+            
+            // Agar serverdan natija kelsa, uni ko'rsatish
             if (data.video_url) {
                 resultElement.innerText = "Natija: " + data.video_url;
-            } else if (data.error) {
-                resultElement.innerText = "Xatolik: " + data.error;
             } else {
-                resultElement.innerText = "Server javob qaytarmadi.";
+                // Agar video_url bo'lmasa, serverdan kelgan butun ma'lumotni chiqarish
+                resultElement.innerText = "Server javobi: " + JSON.stringify(data);
             }
         } catch (err) {
-            resultElement.innerText = "Ulanish xatosi: " + err.message;
+            resultElement.innerText = "Xatolik: " + err.message;
         }
     }
 </script>
