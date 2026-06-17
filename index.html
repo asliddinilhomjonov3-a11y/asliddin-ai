@@ -1,25 +1,33 @@
-<script>
-    async function createVideo() {
-        const prompt = document.getElementById("prompt").value;
-        const resultElement = document.getElementById("result");
-        resultElement.innerText = "Video tayyorlanmoqda...";
-        
-        try {
-            const response = await fetch("/create-video/", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({prompt: prompt})
-            });
+<!DOCTYPE html>
+<html>
+<body>
+    <input type="text" id="prompt" placeholder="Mavzu...">
+    <button onclick="createVideo()">Video yasash</button>
+    <p id="result"></p>
+
+    <script>
+        async function createVideo() {
+            const prompt = document.getElementById("prompt").value;
+            const resEl = document.getElementById("result");
+            resEl.innerText = "Kuting...";
             
-            const result = await response.json();
-            
-            if (response.ok) {
-                resultElement.innerText = "Natija: " + result.data;
-            } else {
-                resultElement.innerText = "Xatolik: " + result.message;
+            try {
+                const response = await fetch("/create-video/", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({prompt: prompt})
+                });
+                const data = await response.json();
+                
+                if (data.status === "success") {
+                    resEl.innerText = "Natija: " + data.data;
+                } else {
+                    resEl.innerText = "Xatolik: " + data.message;
+                }
+            } catch (e) {
+                resEl.innerText = "Ulanish xatosi.";
             }
-        } catch (err) {
-            resultElement.innerText = "Ulanish xatosi: " + err.message;
         }
-    }
-</script>
+    </script>
+</body>
+</html>
