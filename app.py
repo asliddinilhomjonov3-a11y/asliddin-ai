@@ -7,16 +7,12 @@ import os
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
+# Tokeningizni Render sozlamalaridan oling
 os.environ["REPLICATE_API_TOKEN"] = os.getenv("REPLICATE_API_TOKEN", "")
-
-# Render "tirikmi" deb tekshirganda 200 OK qaytaradi
-@app.head("/")
-async def ping():
-    return {"status": "ok"}
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse(request=request, name="index.html", context={})
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/create-video/")
 async def create_ai_video(request: Request):
@@ -24,6 +20,7 @@ async def create_ai_video(request: Request):
         data = await request.json()
         prompt_text = data.get("prompt", "a cinematic shot of a sunset")
         
+        # AI chaqiruvi (Stable Video Diffusion model)
         output = replicate.run(
             "stability-ai/stable-video-diffusion:3f045789",
             input={"input_image": prompt_text}
