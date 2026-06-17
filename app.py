@@ -1,7 +1,5 @@
-import os
-import replicate
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
@@ -10,45 +8,22 @@ async def home():
     return """
     <html>
     <body>
-        <h2>AI Video Fabrika</h2>
-        <input type="text" id="prompt" placeholder="Mavzu...">
-        <button onclick="createVideo()">Video yasash</button>
+        <h2>AI Bepul Rasm/Video Fabrika</h2>
+        <input type="text" id="prompt" placeholder="Mavzu (inglizcha)...">
+        <button onclick="createArt()">Yaratish</button>
         <p id="result"></p>
         <script>
-            async function createVideo() {
+            async function createArt() {
                 const resEl = document.getElementById("result");
                 const prompt = document.getElementById("prompt").value;
-                resEl.innerText = "Kuting...";
-                try {
-                    const response = await fetch("/api/video/", {
-                        method: "POST",
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({prompt: prompt})
-                    });
-                    const data = await response.json();
-                    resEl.innerText = data.msg;
-                } catch(e) { resEl.innerText = "Xato!"; }
+                resEl.innerText = "Yaratilmoqda...";
+                
+                // Pollinations.ai bepul API manzili
+                const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=768&height=768&seed=42`;
+                
+                resEl.innerHTML = `<br><img src="${imageUrl}" style="max-width:400px;"><br><a href="${imageUrl}" target="_blank">Rasmni yuklab olish</a>`;
             }
         </script>
     </body>
     </html>
     """
-
-@app.post("/api/video/")
-async def create_video(request: Request):
-    try:
-        token = os.getenv("REPLICATE_API_TOKEN")
-        if not token: return {"msg": "XATO: API Token topilmadi!"}
-        
-        data = await request.json()
-        prompt = data.get("prompt", "a cinematic photo")
-        
-        # Eng barqaror model yo'li
-        client = replicate.Client(api_token=token)
-        output = client.run(
-            "stability-ai/stable-diffusion-3",
-            input={"prompt": prompt}
-        )
-        return {"msg": "Natija: " + str(output)}
-    except Exception as e:
-        return {"msg": "SERVER XATOSI: " + str(e)}
