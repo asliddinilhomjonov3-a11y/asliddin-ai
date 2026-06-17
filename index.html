@@ -1,36 +1,27 @@
-<body>
-    <h1>AI Video Fabrika</h1>
-    <input type="text" id="prompt" placeholder="Video uchun mavzu yozing...">
-    <button onclick="createVideo()">Video yasash</button>
-    <div id="result" style="margin-top: 20px; font-weight: bold;"></div>
-
-    <script>
-        async function createVideo() {
-            const promptText = document.getElementById("prompt").value;
-            const resultElement = document.getElementById("result");
+<script>
+    async function createVideo() {
+        const promptText = document.getElementById("prompt").value;
+        const resultElement = document.getElementById("result");
+        resultElement.innerText = "Video tayyorlanmoqda, kuting...";
+        
+        try {
+            const response = await fetch("/create-video/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({prompt: promptText})
+            });
             
-            resultElement.innerText = "Video tayyorlanmoqda...";
+            const data = await response.json();
             
-            try {
-                const response = await fetch("/create-video/", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({prompt: promptText})
-                });
-                
-                const data = await response.json();
-                console.log("Serverdan kelgan javob:", data); // F12 -> Console'da ko'rasiz
-                
-                if (data.video_url) {
-                    resultElement.innerText = "Natija: " + data.video_url;
-                } else if (data.error) {
-                    resultElement.innerText = "Xatolik: " + data.error;
-                } else {
-                    resultElement.innerText = "Noma'lum javob: " + JSON.stringify(data);
-                }
-            } catch (err) {
-                resultElement.innerText = "Ulanish xatosi: " + err.message;
+            if (data.video_url) {
+                resultElement.innerText = "Natija: " + data.video_url;
+            } else if (data.error) {
+                resultElement.innerText = "Xatolik: " + data.error;
+            } else {
+                resultElement.innerText = "Server javob qaytarmadi.";
             }
+        } catch (err) {
+            resultElement.innerText = "Ulanish xatosi: " + err.message;
         }
-    </script>
-</body>
+    }
+</script>
