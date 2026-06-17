@@ -10,7 +10,7 @@ async def home():
     <html>
     <body>
         <h2>AI Bepul Rasm Fabrikasi</h2>
-        <input type="text" id="prompt" value="a futuristic city">
+        <input type="text" id="prompt" value="futuristic city">
         <button onclick="createArt()">Yaratish</button>
         <div id="result" style="margin-top:20px;"></div>
         
@@ -18,10 +18,10 @@ async def home():
             function createArt() {
                 const resEl = document.getElementById("result");
                 const prompt = document.getElementById("prompt").value;
-                const url = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=512&height=512&seed=1`;
+                // 'https' ishlatamiz
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&seed=42`;
                 
-                resEl.innerHTML = "Rasmni yuklayapman: <br> " + url + "<br><br>" + 
-                                  `<img src="${url}" onerror="this.onerror=null; this.src='https://placehold.co/200x200?text=Xato!';" style="border: 2px solid red;">`;
+                resEl.innerHTML = `<img src="${url}" style="border: 2px solid green; max-width: 500px;">`;
             }
         </script>
     </body>
