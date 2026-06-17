@@ -9,27 +9,23 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 async def home(request: Request):
-    return templates.TemplateResponse(request=request, name="index.html")
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/create-video/")
 async def create_video(request: Request):
     try:
-        # Tokenni Render'dan o'qiymiz
-        token = os.getenv("REPLICATE_API_TOKEN")
-        if not token:
-            return JSONResponse(status_code=500, content={"error": "API Token topilmadi"})
-            
         data = await request.json()
-        prompt = data.get("prompt", "a cat")
+        prompt = data.get("prompt", "a cinematic shot of a sunset")
         
-        # Modelni ishlatish
-        client = replicate.Client(api_token=token)
+        # SDXL modeli matn qabul qiladi, bu kod aniq ishlaydi
+        client = replicate.Client(api_token=os.getenv("REPLICATE_API_TOKEN"))
         output = client.run(
-            "stability-ai/stable-video-diffusion:3f045789",
-            input={"input_image": prompt}
+            "stability-ai/sdxl:39ed52f2",
+            input={"prompt": prompt}
         )
-        return {"video_url": str(output)}
+        # SDXL rasm qaytaradi, uni ro'yxatdan olamiz
+        image_url = output[0] if isinstance(output, list) else output
+        return {"video_url": str(image_url)}
         
     except Exception as e:
-        # Xatoni aniq ko'ramiz
         return JSONResponse(status_code=500, content={"error": str(e)})
